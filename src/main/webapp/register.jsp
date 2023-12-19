@@ -1,0 +1,77 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>管理员注册</title>
+    <link rel="stylesheet" href="layui/css/layui.css">
+</head>
+<body>
+<br>
+<center><p style="color: black; font-size: 30px;">管理员注册</p></center>
+
+<div class="layui-container">
+    <div class="layui-row">
+        <div class="layui-col-md6 layui-col-md-offset3">
+            <!-- 注册表单 -->
+            <form class="layui-form" method="post" id="registrationForm">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">用户名</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="username" required lay-verify="required"
+                               placeholder="请输入用户名" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">密码</label>
+                    <div class="layui-input-block">
+                        <input type="password" name="password" required lay-verify="required"
+                               placeholder="请输入密码" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button type="submit" class="layui-btn layui-btn-normal">
+                            <i class="layui-icon layui-icon-add-1"></i>注册
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="layui/layui.js"></script>
+
+<script>
+    layui.use(['form'], function(){
+        var form = layui.form;
+        form.on('submit(registrationForm)', function(data){
+            var formData = {
+                username: data.field.username,
+                password: data.field.password
+            };
+            $.ajax({
+                url: '/addUser',
+                type: 'POST',
+                data: JSON.stringify(formData),
+                success: function(res) {
+                    if(res.code === 200) {
+                        layer.msg('注册成功！');
+                        window.location.href = '/login.jsp';
+                    } else {
+                        layer.msg('注册失败！');
+                    }
+                },
+                error: function(error) {
+                    layer.msg('注册请求失败：' + error.statusText);
+                }
+            });
+
+            return false;
+        });
+    });
+</script>
+
+</body>
+</html>
