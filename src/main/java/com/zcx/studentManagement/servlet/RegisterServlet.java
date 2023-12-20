@@ -1,13 +1,8 @@
 package com.zcx.studentManagement.servlet;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.zcx.studentManagement.dao.AdminDao;
 import com.zcx.studentManagement.entity.BaseResponse;
-import com.zcx.studentManagement.utils.RequestUtil;
 
-import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -19,25 +14,14 @@ import java.io.PrintWriter;
 public class RegisterServlet extends HttpServlet {
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        System.out.printf("1111111111111");
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         req.setCharacterEncoding("utf-8");
-        String jsonRegistration = RequestUtil.getRequestBody(req);
-        Gson gson = new Gson();
-        JsonObject jsonObject = new JsonParser().parse(jsonRegistration).getAsJsonObject();
-
-        String username = jsonObject.get("username").getAsString();
-        String password = jsonObject.get("password").getAsString();
-
+        String username = req.getParameter("username");
+        String password = req.getParameter("password");
         resp.setContentType("application/json");
-        BaseResponse<Integer> baseResponse = new BaseResponse<Integer>();
-
+        PrintWriter out = resp.getWriter();
+        BaseResponse<Integer> baseResponse = new BaseResponse<>();
         boolean registrationSuccess = AdminDao.insertAdministrator(username, password);
-
         if (registrationSuccess) {
             baseResponse.setCode(200);
             baseResponse.setMsg("注册成功");
@@ -46,9 +30,7 @@ public class RegisterServlet extends HttpServlet {
             baseResponse.setCode(500);
             baseResponse.setMsg("注册失败，请重试");
         }
-
-        PrintWriter out = resp.getWriter();
-        out.print(gson.toJson(baseResponse));
+        out.print(baseResponse);
         out.flush();
         out.close();
     }

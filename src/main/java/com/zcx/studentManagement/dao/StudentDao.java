@@ -9,7 +9,7 @@ import java.util.List;
 
 public class StudentDao {
 
-    private static Student getStudent(ResultSet resultSet){ //根据查询结果返回学生对象
+    private static Student getStudent(ResultSet resultSet) { // 根据查询结果返回学生对象
         Student student = new Student();
         try {
             int student_id = resultSet.getInt("student_id");
@@ -34,15 +34,15 @@ public class StudentDao {
         return student;
     }
 
-    public static List<Student> getStudents(int page, int limit) {  //返回学生分页信息
-        List<Student> students = new ArrayList<Student>();
+    public static List<Student> getStudents(int page, int limit) { // 返回学生分页信息
+        List<Student> students = new ArrayList<>();
         try {
             Connection connection = DBUtil.getConnection();
-            PreparedStatement statement = connection.prepareCall("select * from student limit ?, ?");
+            PreparedStatement statement = connection.prepareCall("SELECT * FROM student LIMIT ?, ?");
             statement.setInt(1, (page - 1) * limit);
             statement.setInt(2, limit);
             ResultSet resultSet = statement.executeQuery();
-            while(resultSet.next()){
+            while (resultSet.next()) {
                 Student student = getStudent(resultSet);
                 students.add(student);
             }
@@ -53,13 +53,13 @@ public class StudentDao {
         return students;
     }
 
-    public static int getCount(){   //返回学生总数
+    public static int getCount() { // 返回学生总数
         int count = 0;
         try {
             Connection connection = DBUtil.getConnection();
-            PreparedStatement statement = connection.prepareCall("select count(*) from student");
+            PreparedStatement statement = connection.prepareCall("SELECT COUNT(*) FROM student");
             ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()){
+            if (resultSet.next()) {
                 count = resultSet.getInt(1);
             }
             DBUtil.close(resultSet, statement, connection);
@@ -69,11 +69,11 @@ public class StudentDao {
         return count;
     }
 
-    public static int delStudentById(int id){   //通过id删除学生
+    public static int delStudentById(int id) { // 通过id删除学生
         int rows = 0;
         try {
             Connection connection = DBUtil.getConnection();
-            PreparedStatement statement = connection.prepareCall("delete from student where student_id = ?");
+            PreparedStatement statement = connection.prepareCall("DELETE FROM student WHERE student_id = ?");
             statement.setInt(1, id);
             rows = statement.executeUpdate();
             DBUtil.close(null, statement, connection);
@@ -83,11 +83,11 @@ public class StudentDao {
         return rows;
     }
 
-    public static int updateStudent(Student student){   //更新学生
+    public static int updateStudent(Student student) { // 更新学生
         int rows = 0;
         try {
             Connection connection = DBUtil.getConnection();
-            PreparedStatement statement = connection.prepareCall("update student set student_name = ?, student_sex = ?, student_birthday = ?, student_mobile = ?, student_email = ?, student_clazzName = ?, student_teacherName = ? where student_id = ?");
+            PreparedStatement statement = connection.prepareCall("UPDATE student SET student_name = ?, student_sex = ?, student_birthday = ?, student_mobile = ?, student_email = ?, student_clazzName = ?, student_teacherName = ? WHERE student_id = ?");
             statement.setString(1, student.getName());
             statement.setString(2, student.getSex());
             statement.setDate(3, student.getBirthday());
@@ -104,14 +104,14 @@ public class StudentDao {
         return rows;
     }
 
-    public static Student getStudentById(int id){   //通过id获取学生
+    public static Student getStudentById(int id) { // 通过id获取学生
         Student student = new Student();
         try {
             Connection connection = DBUtil.getConnection();
-            PreparedStatement statement = connection.prepareCall("select * from student where student_id = ?");
+            PreparedStatement statement = connection.prepareCall("SELECT * FROM student WHERE student_id = ?");
             statement.setInt(1, id);
             ResultSet resultSet = statement.executeQuery();
-            if(resultSet.next()){
+            if (resultSet.next()) {
                 student = getStudent(resultSet);
             }
             DBUtil.close(resultSet, statement, connection);
@@ -121,11 +121,11 @@ public class StudentDao {
         return student;
     }
 
-    public static int addStudent(Student student){  //添加学生
+    public static int addStudent(Student student) { // 添加学生
         int rows = 0;
         try {
             Connection connection = DBUtil.getConnection();
-            PreparedStatement statement = connection.prepareCall("insert into student (student_name, student_sex, student_birthday, student_mobile, student_email, student_clazzName, student_teacherName) values (?, ?, ?, ?, ?, ?, ?)");
+            PreparedStatement statement = connection.prepareCall("INSERT INTO student (student_name, student_sex, student_birthday, student_mobile, student_email, student_clazzName, student_teacherName) VALUES (?, ?, ?, ?, ?, ?, ?)");
             statement.setString(1, student.getName());
             statement.setString(2, student.getSex());
             statement.setDate(3, student.getBirthday());
@@ -141,20 +141,20 @@ public class StudentDao {
         return rows;
     }
 
-    public static int delStudents(List<Student> students){  //批量删除学生
+    public static int delStudents(List<Student> students) { // 批量删除学生
         int rows = 0;
-        for(int i = 0; i < students.size(); i ++){
-            rows = delStudentById(students.get(i).getId());
+        for (Student student : students) {
+            rows = delStudentById(student.getId());
         }
-        return  rows;
+        return rows;
     }
 
-    public static List<Student> searchStudents(String info, int page, int limit){   //模糊查找学生
+    public static List<Student> searchStudents(String info, int page, int limit) { // 模糊查找学生
         info = "%" + info + "%";
-        List<Student> students = new ArrayList<Student>();
+        List<Student> students = new ArrayList<>();
         try {
             Connection connection = DBUtil.getConnection();
-            PreparedStatement statement = connection.prepareCall("select * from student where student_id like ? or student_name like ? or student_sex like ? or student_birthday like ? or student_mobile like ? or student_email like ? or student_clazzName like ? or student_teacherName like ?  limit ?, ?");
+            PreparedStatement statement = connection.prepareCall("SELECT * FROM student WHERE student_id LIKE ? OR student_name LIKE ? OR student_sex LIKE ? OR student_birthday LIKE ? OR student_mobile LIKE ? OR student_email LIKE ? OR student_clazzName LIKE ? OR student_teacherName LIKE ?  LIMIT ?, ?");
             statement.setString(1, info);
             statement.setString(2, info);
             statement.setString(3, info);
@@ -166,7 +166,7 @@ public class StudentDao {
             statement.setInt(9, (page - 1) * limit);
             statement.setInt(10, limit);
             ResultSet resultSet = statement.executeQuery();
-            while(resultSet.next()){
+            while (resultSet.next()) {
                 Student student = getStudent(resultSet);
                 students.add(student);
             }
@@ -177,12 +177,12 @@ public class StudentDao {
         return students;
     }
 
-    public static int getSearchCount(String info){  //获取查找出的学生数量
+    public static int getSearchCount(String info) { // 获取查找出的学生数量
         info = "%" + info + "%";
         int count = 0;
         try {
             Connection connection = DBUtil.getConnection();
-            PreparedStatement statement = connection.prepareCall("select count(*) from student where student_id like ? or student_name like ? or student_sex like ? or student_birthday like ? or student_mobile like ? or student_email like ? or student_clazzName like ? or student_teacherName like ?");
+            PreparedStatement statement = connection.prepareCall("SELECT COUNT(*) FROM student WHERE student_id LIKE ? OR student_name LIKE ? OR student_sex LIKE ? OR student_birthday LIKE ? OR student_mobile LIKE ? OR student_email LIKE ? OR student_clazzName LIKE ? OR student_teacherName LIKE ?");
             statement.setString(1, info);
             statement.setString(2, info);
             statement.setString(3, info);
@@ -192,8 +192,8 @@ public class StudentDao {
             statement.setString(7, info);
             statement.setString(8, info);
             ResultSet resultSet = statement.executeQuery();
-            while(resultSet.next()){
-               count = resultSet.getInt(1);
+            if (resultSet.next()) {
+                count = resultSet.getInt(1);
             }
             DBUtil.close(resultSet, statement, connection);
         } catch (SQLException e) {

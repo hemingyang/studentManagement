@@ -14,7 +14,7 @@
     <div class="layui-row">
         <div class="layui-col-md6 layui-col-md-offset3">
             <!-- 注册表单 -->
-            <form class="layui-form" method="post" id="registrationForm">
+            <form class="layui-form" method="post" id="registrationForm" action="/addUser">
                 <div class="layui-form-item">
                     <label class="layui-form-label">用户名</label>
                     <div class="layui-input-block">
@@ -42,36 +42,6 @@
 </div>
 
 <script src="layui/layui.js"></script>
-
-<script>
-    layui.use(['form'], function(){
-        var form = layui.form;
-        form.on('submit(registrationForm)', function(data){
-            var formData = {
-                username: data.field.username,
-                password: data.field.password
-            };
-            $.ajax({
-                url: '/addUser',
-                type: 'POST',
-                data: JSON.stringify(formData),
-                success: function(res) {
-                    if(res.code === 200) {
-                        layer.msg('注册成功！');
-                        window.location.href = '/login.jsp';
-                    } else {
-                        layer.msg('注册失败！');
-                    }
-                },
-                error: function(error) {
-                    layer.msg('注册请求失败：' + error.statusText);
-                }
-            });
-
-            return false;
-        });
-    });
-</script>
 
 </body>
 </html>

@@ -34,8 +34,6 @@ public class LoginServlet extends HttpServlet{
         JsonObject jsonObject = new JsonParser().parse(jsonLogin).getAsJsonObject();    //将请求内容转换为json对象
         String username = jsonObject.get("username").getAsString();
         String password = jsonObject.get("password").getAsString();
-       // String vscode = jsonObject.get("vscode").getAsString().toUpperCase();   //验证码不区分大小写
-        //String TrueVsCode = ((String)req.getSession().getAttribute("validateCode")).toUpperCase();  //真正可以使用的验证码要从session中取
         resp.setContentType("application/json");    //设置响应类型
         BaseResponse<Integer> baseResponse = new BaseResponse<Integer>();
         //验证码正确

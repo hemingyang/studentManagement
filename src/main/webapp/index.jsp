@@ -6,7 +6,7 @@
     <title>后台管理</title>
     <link rel="stylesheet" href="layui/css/layui.css">
 </head>
-<body class="layui-layout-body" style="background-image: url(image1/bg1.jpg); background-size: cover;">
+<body class="layui-layout-body" style="background-image: url(image1/bg.jpg); background-size: cover;">
     <div class="layui-layout layui-layout-admin" style="opacity: 0.80;">
         <div class="layui-header layui-bg-black">
             <div class="layui-logo" style="background-image: url(image1/biaoti.jpg);background-size: cover;"></div>

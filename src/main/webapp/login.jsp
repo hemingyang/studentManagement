@@ -5,7 +5,7 @@
     <!--引入layui样式表文件-->
     <link rel="stylesheet" type="text/css" href="layui/css/layui.css">
 </head>
-<body style="background-image: url(image/bg1.jpg); background-size: cover;">
+<body style="background-image: url(image/bg.jpg); background-size: cover;">
     <div class="layui-anim layui-anim-up">
         <div class="layui-container">
             <div class="layui-row">
@@ -140,7 +140,7 @@
 
             // 跳转到注册页面的逻辑
             function redirectToRegisterPage() {
-                window.location.href = "register.jsp"; // 请替换成你的实际注册页面的路径
+                window.location.href = "register.jsp"; //
             }
         });
     </script>

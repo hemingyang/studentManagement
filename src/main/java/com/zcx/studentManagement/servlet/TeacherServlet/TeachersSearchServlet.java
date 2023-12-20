@@ -29,7 +29,7 @@ public class TeachersSearchServlet extends HttpServlet {    //模糊查询老师
         String limit = req.getParameter("limit");
         req.setCharacterEncoding("utf-8");
         String info = req.getParameter("info");
-        List<Teacher> teachers = new ArrayList<Teacher>();
+        List<Teacher> teachers;
         teachers = TeacherDao.searchTeachers(info, StringUtils.isNullOrEmpty(page) ? 1 : Integer.parseInt(page), StringUtils.isNullOrEmpty(limit) ? 10 : Integer.parseInt(limit));
         BaseResponse<List<Teacher>> response = new BaseResponse<List<Teacher>>();
         response.setCode(200);

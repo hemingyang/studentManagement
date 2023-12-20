@@ -12,7 +12,7 @@ import java.util.List;
 
 public class ClazzDao {
 
-    private static Clazz getClazz(ResultSet resultSet){ //通过查询结果获取一个班级对象
+    private static Clazz getClazz(ResultSet resultSet) { // 通过查询结果获取一个班级对象
         Clazz clazz = new Clazz();
         try {
             int clazz_id = resultSet.getInt("clazz_id");
@@ -27,15 +27,15 @@ public class ClazzDao {
         return clazz;
     }
 
-    public static List<Clazz> getClazzs(int page, int limit) {  //获取班级分页信息
-        List<Clazz> clazzs = new ArrayList<Clazz>();
+    public static List<Clazz> getClazzs(int page, int limit) { // 获取班级分页信息
+        List<Clazz> clazzs = new ArrayList<>();
         try {
             Connection connection = DBUtil.getConnection();
-            PreparedStatement statement = connection.prepareCall("select * from clazz limit ?, ?");
+            PreparedStatement statement = connection.prepareCall("SELECT * FROM clazz LIMIT ?, ?");
             statement.setInt(1, (page - 1) * limit);
             statement.setInt(2, limit);
             ResultSet resultSet = statement.executeQuery();
-            while(resultSet.next()){
+            while (resultSet.next()) {
                 Clazz clazz = getClazz(resultSet);
                 clazzs.add(clazz);
             }
@@ -46,13 +46,13 @@ public class ClazzDao {
         return clazzs;
     }
 
-    public static int getCount(){   //获取班级数量
+    public static int getCount() { // 获取班级数量
         int count = 0;
         try {
             Connection connection = DBUtil.getConnection();
-            PreparedStatement statement = connection.prepareCall("select count(*) from clazz");
+            PreparedStatement statement = connection.prepareCall("SELECT COUNT(*) FROM clazz");
             ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()){
+            if (resultSet.next()) {
                 count = resultSet.getInt(1);
             }
             DBUtil.close(resultSet, statement, connection);
@@ -62,11 +62,11 @@ public class ClazzDao {
         return count;
     }
 
-    public static int delClazzById(int id){ //通过id删除班级
+    public static int delClazzById(int id) { // 通过id删除班级
         int rows = 0;
         try {
             Connection connection = DBUtil.getConnection();
-            PreparedStatement statement = connection.prepareCall("delete from clazz where clazz_id = ?");
+            PreparedStatement statement = connection.prepareCall("DELETE FROM clazz WHERE clazz_id = ?");
             statement.setInt(1, id);
             rows = statement.executeUpdate();
             DBUtil.close(null, statement, connection);
@@ -76,11 +76,11 @@ public class ClazzDao {
         return rows;
     }
 
-    public static int updateClazz(Clazz clazz){ //通过id更新班级
+    public static int updateClazz(Clazz clazz) { // 通过id更新班级
         int rows = 0;
         try {
             Connection connection = DBUtil.getConnection();
-            PreparedStatement statement = connection.prepareCall("update clazz set clazz_name = ?, clazz_information = ? where clazz_id = ?");
+            PreparedStatement statement = connection.prepareCall("UPDATE clazz SET clazz_name = ?, clazz_information = ? WHERE clazz_id = ?");
             statement.setString(1, clazz.getName());
             statement.setString(2, clazz.getInformation());
             statement.setInt(3, clazz.getId());
@@ -92,14 +92,14 @@ public class ClazzDao {
         return rows;
     }
 
-    public static Clazz getClazzById(int id){   //通过班级id返回班级对象
+    public static Clazz getClazzById(int id) { // 通过班级id返回班级对象
         Clazz clazz = new Clazz();
         try {
             Connection connection = DBUtil.getConnection();
-            PreparedStatement statement = connection.prepareCall("select * from clazz where clazz_id = ?");
+            PreparedStatement statement = connection.prepareCall("SELECT * FROM clazz WHERE clazz_id = ?");
             statement.setInt(1, id);
             ResultSet resultSet = statement.executeQuery();
-            if(resultSet.next()){
+            if (resultSet.next()) {
                 clazz = getClazz(resultSet);
             }
             DBUtil.close(resultSet, statement, connection);
@@ -109,11 +109,11 @@ public class ClazzDao {
         return clazz;
     }
 
-    public static int addClazz(Clazz clazz){    //添加班级
+    public static int addClazz(Clazz clazz) { // 添加班级
         int rows = 0;
         try {
             Connection connection = DBUtil.getConnection();
-            PreparedStatement statement = connection.prepareCall("insert into clazz (clazz_name, clazz_information) values (?, ?)");
+            PreparedStatement statement = connection.prepareCall("INSERT INTO clazz (clazz_name, clazz_information) VALUES (?, ?)");
             statement.setString(1, clazz.getName());
             statement.setString(2, clazz.getInformation());
             rows = statement.executeUpdate();
@@ -124,27 +124,27 @@ public class ClazzDao {
         return rows;
     }
 
-    public static int delClazzs(List<Clazz> clazzs){    //批量删除班级
+    public static int delClazzs(List<Clazz> clazzs) { // 批量删除班级
         int rows = 0;
-        for(int i = 0; i < clazzs.size(); i ++){
-            rows = delClazzById(clazzs.get(i).getId());
+        for (Clazz clazz : clazzs) {
+            rows = delClazzById(clazz.getId());
         }
-        return  rows;
+        return rows;
     }
 
-    public static List<Clazz> searchClazzs(String info, int page, int limit){   //根据信息模糊查询班级
+    public static List<Clazz> searchClazzs(String info, int page, int limit) { // 根据信息模糊查询班级
         info = "%" + info + "%";
-        List<Clazz> clazzs = new ArrayList<Clazz>();
+        List<Clazz> clazzs = new ArrayList<>();
         try {
             Connection connection = DBUtil.getConnection();
-            PreparedStatement statement = connection.prepareCall("select * from clazz where clazz_id like ? or clazz_name like ? or clazz_information like ? limit ?, ?");
+            PreparedStatement statement = connection.prepareCall("SELECT * FROM clazz WHERE clazz_id LIKE ? OR clazz_name LIKE ? OR clazz_information LIKE ? LIMIT ?, ?");
             statement.setString(1, info);
             statement.setString(2, info);
             statement.setString(3, info);
             statement.setInt(4, (page - 1) * limit);
             statement.setInt(5, limit);
             ResultSet resultSet = statement.executeQuery();
-            while(resultSet.next()){
+            while (resultSet.next()) {
                 Clazz clazz = getClazz(resultSet);
                 clazzs.add(clazz);
             }
@@ -155,13 +155,13 @@ public class ClazzDao {
         return clazzs;
     }
 
-    public static List<Clazz> getAllClazzs() {  //获取全体班级
-        List<Clazz> clazzs = new ArrayList<Clazz>();
+    public static List<Clazz> getAllClazzs() { // 获取全体班级
+        List<Clazz> clazzs = new ArrayList<>();
         try {
             Connection connection = DBUtil.getConnection();
-            PreparedStatement statement = connection.prepareCall("select * from clazz");
+            PreparedStatement statement = connection.prepareCall("SELECT * FROM clazz");
             ResultSet resultSet = statement.executeQuery();
-            while(resultSet.next()){
+            while (resultSet.next()) {
                 Clazz clazz = getClazz(resultSet);
                 clazzs.add(clazz);
             }
@@ -172,17 +172,17 @@ public class ClazzDao {
         return clazzs;
     }
 
-    public static int getSearchCount(String info){  //获取查找到的班级数量
+    public static int getSearchCount(String info) { // 获取查找到的班级数量
         info = "%" + info + "%";
         int count = 0;
         try {
             Connection connection = DBUtil.getConnection();
-            PreparedStatement statement = connection.prepareCall("select count(*) from clazz where clazz_id like ? or clazz_name like ? or clazz_information like ?");
+            PreparedStatement statement = connection.prepareCall("SELECT COUNT(*) FROM clazz WHERE clazz_id LIKE ? OR clazz_name LIKE ? OR clazz_information LIKE ?");
             statement.setString(1, info);
             statement.setString(2, info);
             statement.setString(3, info);
             ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()){
+            if (resultSet.next()) {
                 count = resultSet.getInt(1);
             }
             DBUtil.close(resultSet, statement, connection);
@@ -191,5 +191,4 @@ public class ClazzDao {
         }
         return count;
     }
-
 }

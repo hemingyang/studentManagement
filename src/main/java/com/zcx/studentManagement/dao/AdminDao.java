@@ -12,33 +12,35 @@ import java.util.List;
 
 public class AdminDao {
 
-    public static List<Administrator> getAdministratorByName(String name){  //通过名称获取管理员对象列表
-        List<Administrator> administrators = new ArrayList<Administrator>();
-        try {
-            Connection connection = DBUtil.getConnection();
+    public static List<Administrator> getAdministratorByName(String name) {
+        List<Administrator> administrators = new ArrayList<>();
+        try (Connection connection = DBUtil.getConnection()) {
             if (connection != null) {
-                PreparedStatement statement = connection.prepareStatement("select * from administrator where admin_name = ?");
-                statement.setString(1, name);
-                ResultSet resultSet = statement.executeQuery();
+                // 查询管理员对象列表
+                String query = "SELECT * FROM administrator WHERE admin_name = ?";
+                try (PreparedStatement statement = connection.prepareStatement(query)) {
+                    statement.setString(1, name);
+                    try (ResultSet resultSet = statement.executeQuery()) {
+                        while (resultSet.next()) {
+                            int adminId = resultSet.getInt("admin_id");
+                            String adminName = resultSet.getString("admin_name");
+                            String adminPassword = resultSet.getString("admin_password");
 
-                while (resultSet.next()) {
-                    int admin_id = resultSet.getInt("admin_id");
-                    String admin_name = resultSet.getString("admin_name");
-                    String admin_password = resultSet.getString("admin_password");
+                            Administrator administrator = new Administrator();
+                            administrator.setId(adminId);
+                            administrator.setName(adminName);
+                            administrator.setPassword(adminPassword);
 
-                    Administrator administrator = new Administrator();
-                    administrator.setId(admin_id);
-                    administrator.setName(admin_name);
-                    administrator.setPassword(admin_password);
-
-                    administrators.add(administrator);
+                            administrators.add(administrator);
+                        }
+                    }
                 }
-
-                DBUtil.close(resultSet, statement, connection);
             } else {
-                System.out.println("Failed to obtain a database connection");
+                // 记录或抛出连接失败的消息
+                System.out.println("获取数据库连接失败");
             }
         } catch (SQLException e) {
+            // 记录或处理异常
             e.printStackTrace();
         }
         return administrators;
@@ -47,12 +49,10 @@ public class AdminDao {
     public static boolean insertAdministrator(String name, String password) {
         boolean success = false;
 
-        try {
-            Connection connection = DBUtil.getConnection();
+        try (Connection connection = DBUtil.getConnection()) {
             if (connection != null) {
-
                 if (!isUsernameExists(name, connection)) {
-
+                    // 插入管理员
                     String insertQuery = "INSERT INTO administrator (admin_name, admin_password) VALUES (?, ?)";
                     try (PreparedStatement statement = connection.prepareStatement(insertQuery)) {
                         statement.setString(1, name);
@@ -62,22 +62,23 @@ public class AdminDao {
                         success = rowsAffected > 0;
                     }
                 } else {
-                    System.out.println("Username already exists");
+                    // 记录或抛出用户名已存在的消息
+                    System.out.println("用户名已存在");
                 }
-
-                DBUtil.close(connection);
             } else {
-                System.out.println("Failed to obtain a database connection");
+                // 记录或抛出连接失败的消息
+                System.out.println("获取数据库连接失败");
             }
         } catch (SQLException e) {
+            // 记录或处理异常
             e.printStackTrace();
         }
 
         return success;
     }
 
-    //
     private static boolean isUsernameExists(String name, Connection connection) throws SQLException {
+        // 检查用户名是否已存在
         String checkQuery = "SELECT COUNT(*) FROM administrator WHERE admin_name = ?";
         try (PreparedStatement checkStatement = connection.prepareStatement(checkQuery)) {
             checkStatement.setString(1, name);
@@ -91,6 +92,4 @@ public class AdminDao {
 
         return false;
     }
-
-
 }
